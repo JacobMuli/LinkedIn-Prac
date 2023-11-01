@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">LinkedIn Prac</string>
+    <string name="email">Email</string>
+    <string name="uname">Username</string>
+    <string name="email_icon">Email Icon</string>
+    <string name="call">Call</string>
+    <string name="send_email">Send Email</string>
+    <string name="write_here">Write Here</string>
+    <string name="send">Send</string>
+    <string name="gender">Gender</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="already_have_an_account_login">Already have an Account. Login!</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign up</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non_binary</item>
+        <item>Prefer Not to Say</item>
+    </string-array>
+</resources>
