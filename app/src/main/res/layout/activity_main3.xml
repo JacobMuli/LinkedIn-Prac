@@ -105,4 +105,15 @@
         app:tint="@color/light_green"
         android:layout_margin="20dp"/>
 
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOGOUT"
+        android:layout_margin="20dp"
+        android:background="@drawable/box"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white" />
+
 </LinearLayout>
