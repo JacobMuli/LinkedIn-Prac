@@ -1,105 +1,161 @@
 package com.example.linkedinprac;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.Objects;
+import java.util.UUID;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    EditText username, shortbio, confirmpass, skills, phone_no, Email, password;
-    TextView login;
-    ImageView profile_pic;
-    Button register, prof_pic;
-    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
-    FirebaseAuth mAuth;
-    FirebaseUser mUser;
-    ProgressDialog progdiag;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private String email, password, username, gender, shortBio, skills, phoneNo;
+    private EditText usernameEditText, emailEditText, passwordEditText, confirmPasswordEditText, shortBioEditText, skillsEditText, phoneNoEditText;
+    private Spinner genderSpinner;
+    private Button registerButton, profilePicButton;
 
-
-    private DatabaseReference rootdatabaseref;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReference;
+    private Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        username = findViewById(R.id.uname);
-        Email = findViewById(R.id.email);
-        password = findViewById(R.id.pass);
-        confirmpass = findViewById(R.id.confirm_pass);
-        shortbio = findViewById(R.id.short_bio);
-        skills = findViewById(R.id.skills);
-        prof_pic = findViewById(R.id.profile_pic);
-        profile_pic = findViewById(R.id.profile_pic_inflated);
-        phone_no = findViewById(R.id.phone_no);
-        progdiag = new ProgressDialog(this);
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
-        Spinner spinner = findViewById(R.id.gender_spinner);
-        register = findViewById(R.id.sgn_register);
-        login = findViewById(R.id.login);
+        // Initialize Firebase components
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
-        rootdatabaseref = FirebaseDatabase.getInstance().getReference().child("Users");
+        // Initialize UI elements
+        usernameEditText = findViewById(R.id.uname);
+        emailEditText = findViewById(R.id.email);
+        passwordEditText = findViewById(R.id.pass);
+        confirmPasswordEditText = findViewById(R.id.confirm_pass);
+        genderSpinner = findViewById(R.id.gender_spinner);
+        shortBioEditText = findViewById(R.id.short_bio);
+        skillsEditText = findViewById(R.id.skills);
+        phoneNoEditText = findViewById(R.id.phone_no);
+        registerButton = findViewById(R.id.sgn_register);
+        profilePicButton = findViewById(R.id.profile_pic);
 
-        prof_pic.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, PICK_IMAGE_REQUEST);
-        });
+        // Assuming you have an array of gender options in resources
+        String[] genderOptions = getResources().getStringArray(R.array.gender_array);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.gender_array,
-                android.R.layout.simple_spinner_item
-        );
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, genderOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(0);
+        genderSpinner.setAdapter(adapter);
 
-        register.setOnClickListener(view -> {
-            String uname = username.getText().toString();
-            String short_bio = shortbio.getText().toString();
-            String skill = skills.getText().toString();
-            String profpic = prof_pic.getText().toString();
-            String phoneno = phone_no.getText().toString();
-            String gender = spinner.getSelectedItem().toString();
+        int defaultGenderIndex = findIndex(genderOptions, "Male");
+        genderSpinner.setSelection(defaultGenderIndex);
 
-            if (uname.isEmpty() || short_bio.isEmpty() || skill.isEmpty() || profpic.isEmpty() || phoneno.isEmpty() || gender.isEmpty()) {
-                Toast.makeText(MainActivity2.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
-            } else if (phoneno.length() < 10) {
-                Toast.makeText(MainActivity2.this, "Phone number must be 10 characters", Toast.LENGTH_SHORT).show();
-            }else {
+        // Set onClickListener for registerButton
+        registerButton.setOnClickListener(view -> {
+            // Retrieve user inputs
+            username = usernameEditText.getText().toString().trim();
+            email = emailEditText.getText().toString().trim();
+            password = passwordEditText.getText().toString().trim();
+            String confirmPassword = confirmPasswordEditText.getText().toString().trim();
+            gender = genderSpinner.getSelectedItem().toString();
+            shortBio = shortBioEditText.getText().toString().trim();
+            skills = skillsEditText.getText().toString().trim();
+            phoneNo = phoneNoEditText.getText().toString().trim();
 
-                DatabaseReference userRef = rootdatabaseref.push();
+            // Validate inputs
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || gender.isEmpty() || shortBio.isEmpty() || skills.isEmpty() || phoneNo.isEmpty()) {
+                Toast.makeText(MainActivity2.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-                userRef.child("username").setValue(uname);
-                userRef.child("short_bio").setValue(short_bio);
-                userRef.child("skills").setValue(skill);
-                userRef.child("prof_pic").setValue(profpic);
-                userRef.child("phone_no").setValue(phoneno);
-                userRef.child("gender").setValue(gender)
-                        .addOnSuccessListener(databaseTask -> PerformAuth())
-                        .addOnFailureListener(databaseTask -> Toast.makeText(MainActivity2.this, "Error sending details.", Toast.LENGTH_SHORT).show());
+            // Check if passwords match
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(MainActivity2.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (selectedImageUri != null) {
+                uploadProfilePicture(selectedImageUri);
+            } else {
+                performUserRegistration(null);
             }
         });
+
+        profilePicButton.setOnClickListener(view -> openGallery());
+    }
+
+    private void performUserRegistration(@Nullable String imageUrl) {
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(MainActivity2.this, task -> {
+                    if (task.isSuccessful()) {
+                        // Upload user details to the database
+                        User user = new User(username, email, gender, shortBio, skills, phoneNo);
+                        saveUserDetails(user, imageUrl);
+                        databaseReference.child(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).setValue(user);
+
+                        Toast.makeText(MainActivity2.this, "Registration successful", Toast.LENGTH_SHORT).show();
+
+                        // Start the MainActivity upon successful registration
+                        Intent intent = new Intent(MainActivity2.this, MainActivity.class);
+                        startActivity(intent);
+                        finish(); // Optional: close the current activity if you don't want to go back to it
+
+                    } else {
+                        Toast.makeText(MainActivity2.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    private void uploadProfilePicture(Uri imageUri) {
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference imageRef = storageReference.child("profile_images/" + UUID.randomUUID().toString());
+
+        imageRef.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Image uploaded successfully, get the download URL
+                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Call performUserRegistration with the correct image URL
+                        performUserRegistration(uri.toString());
+                    }).addOnFailureListener(e -> {
+                        // Handle the failure to get the download URL
+                        Toast.makeText(MainActivity2.this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+                })
+                .addOnFailureListener(e -> {
+                    // Handle the failure to upload the image
+                    Toast.makeText(MainActivity2.this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
+
+
+    private void saveUserDetails(User user, @Nullable String imageUrl) {
+        // Implement the logic to save user details to the Firebase Realtime Database
+        // You can use the databaseReference for this purpose
+        // Save the user object and the imageUrl to the appropriate location in the database
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
     @Override
@@ -107,50 +163,16 @@ public class MainActivity2 extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            // Get the selected image URI
-            Uri selectedImageUri = data.getData();
-
-            // Set the selected image to the ImageView
-            profile_pic.setImageURI(selectedImageUri);
-
-            // Make the ImageView visible
-            profile_pic.setVisibility(View.VISIBLE);
+            selectedImageUri = data.getData();
         }
     }
 
-    private void PerformAuth() {
-        String email = Email.getText().toString();
-        String pass = password.getText().toString();
-        String confirm_pass = confirmpass.getText().toString();
-
-        if (email.isEmpty()||pass.isEmpty()||confirm_pass.isEmpty()) {
-            Toast.makeText(MainActivity2.this, "Please fill in all the fields", Toast.LENGTH_SHORT).show();
-        } else if (!email.matches(emailPattern)) {
-            Toast.makeText(MainActivity2.this, "Invalid Email Address", Toast.LENGTH_SHORT).show();
-        } else if (!pass.equals(confirm_pass)) {
-            Toast.makeText(MainActivity2.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-        } else {
-            progdiag.setMessage("Registering User...");
-            progdiag.setTitle("Registration");
-            progdiag.setCanceledOnTouchOutside(false);
-            progdiag.show();
-
-            mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    progdiag.dismiss();
-                    Toast.makeText(MainActivity2.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity2.this, MainActivity3.class);
-                    startActivity(intent);
-                } else {
-                    progdiag.dismiss();
-                    Toast.makeText(MainActivity2.this, "Registration Failed", Toast.LENGTH_SHORT).show();
-                }
-            });
+    private int findIndex(String[] array, String value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i].equals(value)) {
+                return i;
+            }
         }
-
-        login.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity2.this, MainActivity.class);
-            startActivity(intent);
-        });
+        return -1; // Not found
     }
 }
