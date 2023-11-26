@@ -7,6 +7,7 @@ public class User {
     private String shortBio;
     private String skills;
     private String phoneNo;
+    private String profilePicUrl;
 
     // Default constructor required for calls to DataSnapshot.getValue(User.class)
     public User() {
@@ -19,6 +20,7 @@ public class User {
         this.shortBio = shortBio;
         this.skills = skills;
         this.phoneNo = phoneNo;
+        this.profilePicUrl = "";
     }
 
     // Getters and setters
@@ -68,5 +70,9 @@ public class User {
 
     public void setPhoneNo(String phoneNo) {
         this.phoneNo = phoneNo;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
     }
 }

@@ -2,13 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.LinkedInPrac" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/green</item>
-        <item name="colorPrimaryVariant">@color/dark_green</item>
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryVariant">@color/dark_blue</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/blue</item>
-        <item name="colorSecondaryVariant">@color/dark_blue</item>
+        <item name="colorSecondary">@color/green</item>
+        <item name="colorSecondaryVariant">@color/dark_green</item>
         <!--Accent color-->
         <item name="colorAccent">@color/blue</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="Theme.LinkedInPrac" parent="Base.Theme.LinkedInPrac" />

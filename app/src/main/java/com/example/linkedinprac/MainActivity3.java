@@ -1,10 +1,15 @@
 package com.example.linkedinprac;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -15,12 +20,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 public class MainActivity3 extends AppCompatActivity {
 
     private TextView unameTextView, genderTextView, phoneNoTextView, shortBioTextView, skillsTextView;
     private Button button;
     private FloatingActionButton emailButton;
+    private ImageView prof_pic;
+    StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +44,11 @@ public class MainActivity3 extends AppCompatActivity {
         phoneNoTextView = findViewById(R.id.phone_no);
         shortBioTextView = findViewById(R.id.short_bio);
         skillsTextView = findViewById(R.id.skills);
+        prof_pic = findViewById(R.id.profile_pic);
 
         emailButton = findViewById(R.id.email_icon);
         button = findViewById(R.id.logout);
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Fetch user details from Firebase
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -55,6 +68,27 @@ public class MainActivity3 extends AppCompatActivity {
                         phoneNoTextView.setText(user.getPhoneNo());
                         shortBioTextView.setText(user.getShortBio());
                         skillsTextView.setText(user.getSkills());
+
+                        if (!TextUtils.isEmpty(user.getProfilePicUrl())) {
+                            StorageReference profilePicRef = storageReference.child("profile_images/" + user.getProfilePicUrl());
+                            profilePicRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                if (!isFinishing() && !isDestroyed()) {
+                                    Picasso.get().load(uri.toString()).into(prof_pic, new Callback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            // Image loaded successfully
+                                        }
+
+                                        @Override
+                                        public void onError(Exception e) {
+                                            Log.e(TAG, "Failed to load image: " + e.getMessage());
+                                        }
+                                    });
+                                }
+                            }).addOnFailureListener(exception -> {
+                                Log.e(TAG, "Failed to get download URL: " + exception.getMessage());
+                            });
+                        }
                     }
                 }
 

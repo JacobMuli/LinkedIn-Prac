@@ -23,11 +23,10 @@
             android:orientation="horizontal"
             android:padding="16dp">
 
-            <TextView
-                android:id="@+id/user_icon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/user"
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginBottom="10dp"/>
 
             <LinearLayout
@@ -101,8 +100,8 @@
         android:layout_gravity="end|bottom"
         android:contentDescription="@string/email_icon"
         app:srcCompat="@android:drawable/ic_dialog_email"
-        app:backgroundTint="@color/dark_green"
-        app:tint="@color/light_green"
+        app:backgroundTint="@color/dark_blue"
+        app:tint="@color/blue"
         android:layout_margin="20dp"/>
 
     <Button
