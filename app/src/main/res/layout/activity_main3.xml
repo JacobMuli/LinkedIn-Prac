@@ -20,71 +20,129 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="16dp">
 
             <ImageView
                 android:id="@+id/profile_pic"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_width="145dp"
+                android:layout_height="145dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/round_image"
+                tools:srcCompat="@tools:sample/avatars" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp">
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Username"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/uname"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
+                    android:background="@drawable/box"
+                    android:padding="10dp"
+                    android:layout_marginEnd="10dp"
                     android:text=""
-                    android:background="@drawable/box"/>
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="291dp">
+
+                    <TextView
+                        android:id="@+id/txt"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:text="Gender"
+                        android:textSize="20sp" />
+
                     <TextView
                         android:id="@+id/gender"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/txt"
+                        android:background="@drawable/box"
+                        android:padding="10dp"
                         android:text=""
-                        android:textSize="16sp"
-                        android:background="@drawable/box"/>
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/txy"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_toRightOf="@id/txt"
+                        android:text="phone no"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/phone_no"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="150dp"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/txy"
+                        android:layout_marginStart="49dp"
+                        android:layout_toRightOf="@+id/gender"
+                        android:background="@drawable/box"
+                        android:padding="10dp"
                         android:text=""
-                        android:textSize="16sp"
-                        android:layout_toEndOf="@+id/gender"
-                        android:layout_marginStart="40dp"
-                        android:background="@drawable/box"/>
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/txu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/phone_no"
+                        android:layout_marginTop="10dp"
+                        android:text="Short bio"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/short_bio"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:text=""
-                        android:textSize="16sp"
-                        android:layout_below="@+id/gender"
+                        android:layout_height="70dp"
+                        android:layout_below="@+id/txu"
                         android:layout_marginTop="10dp"
-                        android:background="@drawable/box" />
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/box"
+                        android:padding="10dp"
+                        android:text=""
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/txv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/short_bio"
+                        android:layout_marginTop="10dp"
+                        android:text="Skills"
+                        android:textSize="20sp" />
 
                     <TextView
                         android:id="@+id/skills"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_below="@+id/txv"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/box"
+                        android:padding="3dp"
                         android:text=""
-                        android:textSize="16sp"
-                        android:layout_below="@+id/short_bio"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/box"/>
+                        android:textSize="16sp" />
 
                 </RelativeLayout>
             </LinearLayout>
@@ -110,9 +168,9 @@
         android:layout_height="wrap_content"
         android:text="LOGOUT"
         android:layout_margin="20dp"
-        android:background="@drawable/box"
+        android:background="@drawable/button"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="@color/white" />
+        />
 
 </LinearLayout>

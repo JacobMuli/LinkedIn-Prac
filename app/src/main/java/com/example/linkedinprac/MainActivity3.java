@@ -5,6 +5,8 @@ import static android.content.ContentValues.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +27,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
+//import com.squareup.picasso.Callback;
+//import com.squareup.picasso.Picasso;
+
+
 
 public class MainActivity3 extends AppCompatActivity {
 
@@ -69,25 +78,24 @@ public class MainActivity3 extends AppCompatActivity {
                         shortBioTextView.setText(user.getShortBio());
                         skillsTextView.setText(user.getSkills());
 
-                        if (!TextUtils.isEmpty(user.getProfilePicUrl())) {
-                            StorageReference profilePicRef = storageReference.child("profile_images/" + user.getProfilePicUrl());
-                            profilePicRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                if (!isFinishing() && !isDestroyed()) {
-                                    Picasso.get().load(uri.toString()).into(prof_pic, new Callback() {
-                                        @Override
-                                        public void onSuccess() {
-                                            // Image loaded successfully
-                                        }
+                        // using cureent user id to get the image
+                        StorageReference profileRef = storageReference.child("users/"+userId+"/profile.jpeg");
 
-                                        @Override
-                                        public void onError(Exception e) {
-                                            Log.e(TAG, "Failed to load image: " + e.getMessage());
-                                        }
-                                    });
-                                }
-                            }).addOnFailureListener(exception -> {
-                                Log.e(TAG, "Failed to get download URL: " + exception.getMessage());
+                        try {
+                            // create temporary file to store the image
+                            final File localFile = File.createTempFile("tempImage", "jpeg");
+
+                            // get the image from firebase storage and store it in the temporary file
+                            profileRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+                               // decode the image using bit map
+                                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                                // set the image view with the image using glide
+                                prof_pic.setImageBitmap(bitmap);
+                            }).addOnFailureListener(e -> {
+                                // Handle any errors
                             });
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
