@@ -1,73 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".MainActivity4">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/contact_card"
+        android:id="@+id/email_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/box">
+        app:cardCornerRadius="20dp"
+        app:cardElevation="10dp"
+        app:cardBackgroundColor="#F6F3F3"
+        app:cardMaxElevation="12dp"
+        app:cardPreventCornerOverlap="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.545"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.934">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_gravity="center"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/contact_header"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/send_email"
+                android:layout_gravity="center"
+                android:text="@string/send_email_text"
+                android:textColor="@color/light_blue"
                 android:textSize="24sp"
-                android:textStyle="italic"
-                android:textAlignment="center"
-                />
+                android:textStyle="bold" />
+
             <EditText
-                android:id="@+id/contact_details"
-                android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:inputType="textMultiLine"
-                android:hint="@string/write_here"
-                android:textAlignment="center"
+                android:id="@+id/popup_window_email_input"
+                android:layout_width="330dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/box"
-                android:layout_marginBottom="20dp"
-                android:layout_below="@+id/contact_header"
-                android:autofillHints="no" />
-
-            <Button
-                android:id="@+id/btn_send"
+                android:paddingStart="5dp"
+                android:hint="@string/enter_email_hint"
+                android:labelFor="@id/popup_window_email_input_label"/>
+            <TextView
+                android:id="@+id/popup_window_email_input_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/send"
-                android:background="@drawable/box"
-                android:layout_below="@+id/contact_details"
-                android:layout_marginStart="50dp"/>
+                android:text="@string/email_input_field_label"
+                android:importantForAccessibility="no"/>
 
-            <Button
-                android:id="@+id/btn_call"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/call"
-                android:background="@drawable/box"
-                android:layout_below="@+id/contact_details"
-                android:layout_toEndOf="@+id/btn_send"
-                android:layout_marginStart="40dp"/>
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="8dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal">
 
-        </RelativeLayout>
+                <Button
+                    android:id="@+id/send_email_button"
+                    android:layout_width="5dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="@string/send_button_text"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/call_button"
+                    android:layout_width="5dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="@string/call_button_text"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/contact_footer"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:background="@drawable/arrow_left"/>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
