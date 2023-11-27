@@ -20,6 +20,11 @@
     <string name="register">REGISTER</string>
     <string name="prof_pic">Profile Picture</string>
     <string name="profile_pic_description">Profile Picture</string>
+    <string name="send_email_text">Send email</string>
+    <string name="enter_email_hint">Enter Email</string>
+    <string name="email_input_field_label">Email Input Field</string>
+    <string name="send_button_text">Send</string>
+    <string name="call_button_text">Call</string>
 
     <string-array name="gender_array">
         <item>Male</item>
