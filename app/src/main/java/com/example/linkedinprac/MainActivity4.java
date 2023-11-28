@@ -49,11 +49,13 @@ public class MainActivity4 extends AppCompatActivity {
 
         // Retrieves email and phone number data from intent extras
         Intent intent = getIntent();
-
         String userEmail = intent.getStringExtra("email");
         String mobileNo = intent.getStringExtra("phone");
 
-        if (mobileNo != null) Log.d("MOBILE", mobileNo);
+        if (mobileNo != null) {
+            Log.d("MOBILE", mobileNo);
+            zeroPaddedMobileNumber = padMobileNumber(mobileNo);
+        }
 
         // Request permission to make phone calls if not granted
         if (ContextCompat.checkSelfPermission(MainActivity4.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -62,9 +64,7 @@ public class MainActivity4 extends AppCompatActivity {
 
         // Sets onClickListener for the mobileCallButton to initiate a phone call
         mobileCallButton.setOnClickListener(v -> {
-            if (mobileNo != null && !mobileNo.isEmpty()) {
-                zeroPaddedMobileNumber = padMobileNumber(mobileNo);
-
+            if (zeroPaddedMobileNumber != null && !zeroPaddedMobileNumber.isEmpty()) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:" + zeroPaddedMobileNumber));
 

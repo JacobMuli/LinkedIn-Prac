@@ -1,112 +1,85 @@
 package com.example.linkedinprac;
 
-import static android.content.ContentValues.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
-import java.io.File;
-//import com.squareup.picasso.Callback;
-//import com.squareup.picasso.Picasso;
+import java.util.ArrayList;
+import java.util.List;
 
+public class MainActivity3 extends AppCompatActivity implements UserCardAdapter.OnEmailButtonClickListener {
 
-
-public class MainActivity3 extends AppCompatActivity {
-
-    private TextView unameTextView, genderTextView, phoneNoTextView, shortBioTextView, skillsTextView;
-    private Button button;
-    private FloatingActionButton emailButton;
-    private ImageView prof_pic;
-    StorageReference storageReference;
+    private RecyclerView recyclerView;
+    private UserCardAdapter adapter;
+    private List<User> userList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
-        // Initialize TextViews
-        unameTextView = findViewById(R.id.uname);
-        genderTextView = findViewById(R.id.gender);
-        phoneNoTextView = findViewById(R.id.phone_no);
-        shortBioTextView = findViewById(R.id.short_bio);
-        skillsTextView = findViewById(R.id.skills);
-        prof_pic = findViewById(R.id.profile_pic);
+        recyclerView = findViewById(R.id.recyclerView);
 
-        emailButton = findViewById(R.id.email_icon);
-        button = findViewById(R.id.logout);
-        storageReference = FirebaseStorage.getInstance().getReference();
+        userList = new ArrayList<>();
+        adapter = new UserCardAdapter(userList, this); // Pass the listener
 
-        // Fetch user details from Firebase
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            String userId = currentUser.getUid();
-            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            userRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        User user = dataSnapshot.getValue(User.class);
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
 
-                        // Set TextViews with user details
-                        unameTextView.setText(user.getUsername());
-                        genderTextView.setText(user.getGender());
-                        phoneNoTextView.setText(user.getPhoneNo());
-                        shortBioTextView.setText(user.getShortBio());
-                        skillsTextView.setText(user.getSkills());
-
-                        // using cureent user id to get the image
-                        StorageReference profileRef = storageReference.child("users/"+userId+"/profile.jpeg");
-                        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            Picasso.get().load(uri).into(prof_pic);
-                        }).addOnFailureListener(e -> {
-                            // Handle any errors
-                        });
-
+        usersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    userList.clear();
+                    for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                        User user = userSnapshot.getValue(User.class);
+                        userList.add(user);
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    // Handle error
+                    adapter.notifyDataSetChanged();
                 }
-            });
-        }
+            }
 
-        emailButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity3.this, MainActivity4.class);
-            startActivity(intent);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+            }
         });
 
-        button.setOnClickListener(v -> {
+        Button logoutButton = findViewById(R.id.logout);
+
+        logoutButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(MainActivity3.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
         });
+    }
+
+    public void onEmailButtonClick(String email) {
+        User selectedUser = adapter.getSelectedUser();
+        if (selectedUser != null) {
+            Intent intent = new Intent(MainActivity3.this, MainActivity4.class);
+            intent.putExtra("email", email);
+            String phoneNo = selectedUser.getPhoneNo();
+            intent.putExtra("phone", phoneNo);
+            startActivity(intent);
+        } else {
+            // Handle the case where no user is selected
+        }
     }
 }
