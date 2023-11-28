@@ -29,8 +29,8 @@
                 android:layout_height="145dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/round_image"
-                tools:srcCompat="@tools:sample/avatars" />
+                android:background="@drawable/box"
+                app:srcCompat="@drawable/default_profile_image" />
 
             <LinearLayout
                 android:layout_width="match_parent"

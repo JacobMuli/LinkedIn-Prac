@@ -80,23 +80,12 @@ public class MainActivity3 extends AppCompatActivity {
 
                         // using cureent user id to get the image
                         StorageReference profileRef = storageReference.child("users/"+userId+"/profile.jpeg");
+                        profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Picasso.get().load(uri).into(prof_pic);
+                        }).addOnFailureListener(e -> {
+                            // Handle any errors
+                        });
 
-                        try {
-                            // create temporary file to store the image
-                            final File localFile = File.createTempFile("tempImage", "jpeg");
-
-                            // get the image from firebase storage and store it in the temporary file
-                            profileRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-                               // decode the image using bit map
-                                Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                                // set the image view with the image using glide
-                                prof_pic.setImageBitmap(bitmap);
-                            }).addOnFailureListener(e -> {
-                                // Handle any errors
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
 
